@@ -41,6 +41,12 @@ functions:
     events: [ { http: 'POST /files' } ]
     environment:
       PLUGIN: localStorage
+  filesUpload:
+      name: '${self:service}-${self:custom.stage}-files-upload'
+      handler: ${self:custom.api.source}/files.uploadFile
+      events: [ { http: 'POST /files/upload' } ]
+      environment:
+        PLUGIN: localStorage
   filesRead:
     name: '${self:service}-${self:custom.stage}-files-read'
     handler: ${self:custom.api.source}/files.readFile

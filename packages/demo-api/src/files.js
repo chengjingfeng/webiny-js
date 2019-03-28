@@ -1,6 +1,7 @@
 // @flow
 import create from "./files/create";
 import read from "./files/read";
+import upload from "./files/upload";
 
 export async function createFile(event: Object) {
     event.body = event.body ? JSON.parse(event.body) : {};
@@ -23,6 +24,10 @@ export async function createFile(event: Object) {
             }
         };
     }
+}
+
+export function uploadFile(...args) {
+    return upload(...args);
 }
 
 export async function readFile(event: Object) {

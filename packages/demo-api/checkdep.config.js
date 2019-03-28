@@ -1,5 +1,6 @@
 module.exports = {
+    ignoredDirs: ["/node_modules/", "/template/packages/"],
     ignore: {
-        src: ["path", "os"]
+        src: ["fs", "path"]
     }
 };

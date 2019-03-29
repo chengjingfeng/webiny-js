@@ -37,7 +37,6 @@
     "chalk": "^2.4.1",
     "child-process-promise": "^2.2.1",
     "commitizen": "^2.10.1",
-    "cors": "^2.8.5",
     "cross-env": "^5.2.0",
     "cz-customizable": "^5.2.0",
     "documentation": "^5.3.5",
@@ -76,6 +75,7 @@
     "longest": "^2.0.1",
     "minimatch": "^3.0.4",
     "mkdirp": "^0.5.1",
+    "multer": "^1.4.1",
     "ncp": "^2.0.0",
     "nodemon": "^1.18.10",
     "p-locate": "^3.0.0",
@@ -110,7 +110,8 @@
     "release:dry": "node scripts/release/packages --preview",
     "release-independent": "node scripts/release/independent",
     "release-independent:dry": "node scripts/release/independent --preview",
-    "webiny-ui-build-storybook": "cd packages/webiny-ui && cross-env OUT=../../netlify-static yarn build-storybook"
+    "webiny-ui-build-storybook": "cd packages/webiny-ui && cross-env OUT=../../netlify-static yarn build-storybook",
+    "api": "nodemon server/index.js"
   },
   "pre-commit": [
     "lint-staged"

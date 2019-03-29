@@ -3,11 +3,11 @@ import fs from "fs-extra";
 import sharp from "sharp";
 import mime from "mime-types";
 
-const read = async (src: string, options: Object = {}) => {
-    const pwd: string = (process.env.PWD: any);
-
-    let buffer = await fs.readFile(`${pwd}/static/${src}`);
-    const type = mime.lookup(src);
+const handler = async (event, { req }) => {
+    const { key } = req.params;
+    const options = req.query;
+    const type = mime.lookup(key);
+    let buffer = await fs.readFile(`${process.cwd()}/static/${key}`);
 
     if (options) {
         // If an image was requested, we can apply additional image processing.
@@ -22,7 +22,14 @@ const read = async (src: string, options: Object = {}) => {
         }
     }
 
-    return { src: buffer, type };
+    return {
+        statusCode: 200,
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": type
+        },
+        body: buffer
+    };
 };
 
-export default read;
+export { handler };

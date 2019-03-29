@@ -18,7 +18,7 @@ module.exports = {
     target: "node",
     // Generate sourcemaps for proper error messages
     devtool: "source-map",
-    externals: ["aws-sdk", "vertx", "sharp", "mongodb"],
+    externals: ["aws-sdk", "vertx", "mongodb"],
     mode: isEnvDevelopment ? "development" : "production",
     optimization: {
         // We no not want to minimize our code.

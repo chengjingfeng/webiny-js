@@ -23,7 +23,7 @@ const save = req => {
     });
 };
 
-const handler = async (event: Object, { req }) => {
+export const handler = async (event: Object, { req }) => {
     await save(req);
 
     return {
@@ -33,5 +33,3 @@ const handler = async (event: Object, { req }) => {
         }
     };
 };
-
-export { handler };

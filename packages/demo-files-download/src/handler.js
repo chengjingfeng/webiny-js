@@ -3,7 +3,7 @@ import fs from "fs-extra";
 import sharp from "sharp";
 import mime from "mime-types";
 
-const handler = async (event, { req }) => {
+export const handler = async (event, { req }) => {
     const { key } = req.params;
     const options = req.query;
     const type = mime.lookup(key);
@@ -31,5 +31,3 @@ const handler = async (event, { req }) => {
         body: buffer
     };
 };
-
-export { handler };

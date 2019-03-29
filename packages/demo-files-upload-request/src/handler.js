@@ -13,7 +13,7 @@ const respond = body => {
     };
 };
 
-const handler = async (event: Object) => {
+export const handler = async (event: Object) => {
     const options = JSON.parse(event.body);
 
     const { name } = options;
@@ -62,5 +62,3 @@ const handler = async (event: Object) => {
         }
     });
 };
-
-export { handler };

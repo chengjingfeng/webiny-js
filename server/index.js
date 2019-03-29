@@ -1,39 +1,24 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
+const fs = require("fs-extra");
 const app = express();
+const getPackages = require("get-yarn-workspaces");
 
 require("@babel/register")({
     configFile: path.resolve(__dirname + "/../babel.config.js"),
     only: [/packages|independent/]
 });
 
-const functions = [
-    {
-        root: path.join(process.cwd(), "packages/demo-api"),
-        handler: "/src/handler.js",
-        path: "/function/api",
-        method: "POST"
-    },
-    {
-        root: path.join(process.cwd(), "packages/demo-api"),
-        handler: "/src/downloadFile.js",
-        path: "/files/:key",
-        method: "GET"
-    },
-    {
-        root: path.join(process.cwd(), "packages/demo-api"),
-        handler: "/src/uploadFileRequest.js",
-        path: "/files",
-        method: "POST"
-    },
-    {
-        root: path.join(process.cwd(), "packages/demo-api"),
-        handler: "/src/uploadFile.js",
-        path: "/files/upload",
-        method: "POST"
-    }
-];
+// Find all Webiny apps in the project (packages containing .webiny file)
+const functions = getPackages(process.cwd())
+    .filter(pkg => fs.existsSync(pkg + "/.webiny"))
+    .map(root => {
+        const json = JSON.parse(fs.readFileSync(root + "/.webiny", "utf8"));
+        json.handler = "/src/handler.js";
+        json.root = root;
+        return json;
+    });
 
 const requestToEvent = req => {
     const event = {

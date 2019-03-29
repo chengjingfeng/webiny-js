@@ -15,6 +15,11 @@ const save = req => {
 
         busboy.on("file", function(name, file) {
             const folder = `${process.cwd()}/static/`;
+
+            if (fs.existsSync(folder) === false) {
+                fs.mkdirSync(folder);
+            }
+
             const writerStream = fs.createWriteStream(folder + key, { encoding: "utf8" });
             file.pipe(writerStream);
         });

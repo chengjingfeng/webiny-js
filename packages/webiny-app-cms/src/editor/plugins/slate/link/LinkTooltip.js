@@ -1,24 +1,29 @@
 import React, { useCallback, useRef, useEffect } from "react";
 import styled from "react-emotion";
+import { css } from "emotion";
+import { Elevation } from "webiny-ui/Elevation";
 import { getLinkRange, TYPE } from "./utils";
 
 const Tooltip = styled("span")({
-    position: "fixed",
-    display: "none",
+    display: "flex",
     flexDirection: "row",
+    position: "fixed",
     top: 20,
     left: 0,
-    padding: "2px 5px",
-    backgroundColor: "#fff",
-    border: "1px solid var(--mdc-theme-secondary)",
     zIndex: 1,
     width: "auto",
     maxWidth: 520,
-    a: {
-        fontSize: 16
-    },
     "> span:not(:first-child)": {
         marginLeft: 10
+    }
+});
+
+const tooltipInner = css({
+    padding: "5px 10px",
+    borderRadius: 2,
+    fontSize: "0.8rem",
+    a: {
+        cursor: "pointer"
     }
 });
 
@@ -63,18 +68,20 @@ const LinkTooltip = ({ editor, onChange, activatePlugin }) => {
             const editorRect = menu.parentNode.getBoundingClientRect();
             let { top, left, height } = getSelectionRect();
 
-            // Position menu
-            const position = { top: top - editorRect.top + height, left: left - editorRect.left };
+            // Cursor position is calculated in relation to `window`
+            const cursorLeft = left - editorRect.left;
+            const position = { top: top - editorRect.top + height, left: cursorLeft };
 
             menu.style.display = "flex";
             menu.style.top = position.top + "px";
-            menu.style.left = position.left + "px";
+            menu.style.left = `0px`;
 
+            // Menu position is calculated in relation to parent element
             const menuRect = menu.getBoundingClientRect();
-            const menuRight = left + menuRect.width;
-            const diff = editorRect.right - menuRight;
-            if (diff < 0) {
-                menu.style.left = `${left - editorRect.left + diff}px`;
+            if (menuRect.width + cursorLeft > editorRect.width) {
+                menu.style.left = `${editorRect.width - menuRect.width - 20}px`;
+            } else {
+                menu.style.left = `${cursorLeft}px`;
             }
         }
     });
@@ -93,14 +100,16 @@ const LinkTooltip = ({ editor, onChange, activatePlugin }) => {
     const href = link ? link.data.get("href") : "";
 
     return (
-        <Tooltip innerRef={menuRef}>
-            <span>
-                <a href={href} target={"_blank"}>
-                    {href.length > 50 ? compressLink(href) : href}
-                </a>
-            </span>
-            <button onClick={activateLink}>Change</button>
-            <button onClick={removeLink}>Remove</button>
+        <Tooltip innerRef={menuRef} style={{ display: "none" }}>
+            <Elevation className={tooltipInner} z={1}>
+                <span>
+                    Link:{" "}
+                    <a href={href} target={"_blank"}>
+                        {href.length > 50 ? compressLink(href) : href}
+                    </a>
+                </span>{" "}
+                | <a onClick={activateLink}>Change</a> | <a onClick={removeLink}>Remove</a>
+            </Elevation>
         </Tooltip>
     );
 };

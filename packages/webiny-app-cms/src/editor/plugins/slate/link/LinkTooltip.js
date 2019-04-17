@@ -1,29 +1,24 @@
 import React, { useCallback, useRef, useEffect } from "react";
 import styled from "react-emotion";
-import { css } from "emotion";
 import { getLinkRange, TYPE } from "./utils";
-import { Elevation } from "webiny-ui/Elevation";
 
 const Tooltip = styled("span")({
-    display: "flex",
-    flexDirection: "row",
     position: "fixed",
+    display: "none",
+    flexDirection: "row",
     top: 20,
     left: 0,
+    padding: "2px 5px",
+    backgroundColor: "#fff",
+    border: "1px solid var(--mdc-theme-secondary)",
     zIndex: 1,
     width: "auto",
     maxWidth: 520,
+    a: {
+        fontSize: 16
+    },
     "> span:not(:first-child)": {
         marginLeft: 10
-    }
-});
-
-const tooltipInner = css({
-    padding: "5px 10px",
-    borderRadius: 2,
-    fontSize: "0.8rem",
-    a: {
-        cursor: "pointer"
     }
 });
 
@@ -46,11 +41,12 @@ const getSelectionRect = () => {
 
 const LinkTooltip = ({ editor, onChange, activatePlugin }) => {
     const menuRef = useRef(null);
-    const menu = menuRef.current;
     const link = editor.value.inlines.find(inline => inline.type === "link");
     const { selection } = editor.value;
 
     useEffect(() => {
+        const menu = menuRef.current;
+
         if (!link && selection.isFocused) {
             menu.style.display = "none";
             return;
@@ -65,23 +61,27 @@ const LinkTooltip = ({ editor, onChange, activatePlugin }) => {
         // Calculate position
         if (menu) {
             const editorRect = menu.parentNode.getBoundingClientRect();
-            const menuRect = menu.getBoundingClientRect();
             let { top, left, height } = getSelectionRect();
 
-            const menuRight = left + menuRect.width;
-            const diff = editorRect.right - menuRight;
-
             // Position menu
-            const position = { top: top + height, left: diff < 0 ? left + diff : left };
+            const position = { top: top - editorRect.top + height, left: left - editorRect.left };
 
             menu.style.display = "flex";
             menu.style.top = position.top + "px";
             menu.style.left = position.left + "px";
+
+            const menuRect = menu.getBoundingClientRect();
+            const menuRight = left + menuRect.width;
+            const diff = editorRect.right - menuRight;
+            if (diff < 0) {
+                menu.style.left = `${left - editorRect.left + diff}px`;
+            }
         }
     });
 
-    const activateLink = useCallback(() => activatePlugin("cms-form-rich-editor-menu-item-link"));
+    const activateLink = useCallback(() => activatePlugin("cms-slate-menu-item-link"));
     const removeLink = useCallback(() => {
+        const menu = menuRef.current;
         editor.change(change => {
             // Restore selection
             change.select(getLinkRange(change, change.value.selection)).unwrapInline(TYPE);
@@ -93,16 +93,14 @@ const LinkTooltip = ({ editor, onChange, activatePlugin }) => {
     const href = link ? link.data.get("href") : "";
 
     return (
-        <Tooltip innerRef={menuRef} style={{ display: "none" }}>
-            <Elevation className={tooltipInner} z={1}>
-                <span>
-                    Link:{" "}
-                    <a href={href} target={"_blank"}>
-                        {href.length > 50 ? compressLink(href) : href}
-                    </a>
-                </span>{" "}
-                | <a onClick={activateLink}>Change</a> | <a onClick={removeLink}>Remove</a>
-            </Elevation>
+        <Tooltip innerRef={menuRef}>
+            <span>
+                <a href={href} target={"_blank"}>
+                    {href.length > 50 ? compressLink(href) : href}
+                </a>
+            </span>
+            <button onClick={activateLink}>Change</button>
+            <button onClick={removeLink}>Remove</button>
         </Tooltip>
     );
 };

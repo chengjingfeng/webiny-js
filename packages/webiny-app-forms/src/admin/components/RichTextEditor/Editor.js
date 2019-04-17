@@ -4,8 +4,23 @@ import { Editor } from "slate-react";
 import { Value } from "slate";
 import { getPlugins } from "webiny-plugins";
 import { withCms } from "webiny-app-cms/context";
+import styled from "react-emotion";
 import initialValue from "./value";
 import Menu from "./Menu";
+
+const EditorWrapper = styled("div")({
+    border: "1px solid var(--mdc-theme-on-background)",
+    borderRadius: 2,
+    boxSizing: "border-box",
+    padding: 10
+});
+
+const EditorContent = styled("div")({
+    boxSizing: "border-box",
+    padding: "0px 5px 10px 5px",
+    maxHeight: 400,
+    overflow: "scroll"
+});
 
 class RichTextEditor extends React.Component {
     static defaultProps = {
@@ -59,7 +74,7 @@ class RichTextEditor extends React.Component {
 
     activatePlugin = (plugin: string) => {
         const { value } = this.state;
-        
+
         this.setState({
             activePlugin: {
                 plugin,
@@ -83,7 +98,7 @@ class RichTextEditor extends React.Component {
 
     render() {
         return (
-            <React.Fragment>
+            <EditorWrapper>
                 <Menu
                     exclude={this.props.exclude}
                     value={this.state.value}
@@ -93,20 +108,22 @@ class RichTextEditor extends React.Component {
                     activePlugin={this.state.activePlugin}
                     deactivatePlugin={this.deactivatePlugin}
                 />
-                <Editor
-                    ref={this.editor}
-                    autoCorrect={false}
-                    spellCheck={false}
-                    plugins={this.plugins}
-                    placeholder="Enter some text..."
-                    value={this.state.value}
-                    onChange={this.onChange}
-                    theme={this.props.cms.theme}
-                    activatePlugin={this.activatePlugin}
-                    activePlugin={this.state.activePlugin}
-                    deactivatePlugin={this.deactivatePlugin}
-                />
-            </React.Fragment>
+                <EditorContent>
+                    <Editor
+                        ref={this.editor}
+                        autoCorrect={false}
+                        spellCheck={false}
+                        plugins={this.plugins}
+                        placeholder="Enter some text..."
+                        value={this.state.value}
+                        onChange={this.onChange}
+                        theme={this.props.cms.theme}
+                        activatePlugin={this.activatePlugin}
+                        activePlugin={this.state.activePlugin}
+                        deactivatePlugin={this.deactivatePlugin}
+                    />
+                </EditorContent>
+            </EditorWrapper>
         );
     }
 }

@@ -4,7 +4,24 @@ import styled from "react-emotion";
 import { css } from "emotion";
 
 const MenuContainer = styled("div")({
-    position: "relative"
+    position: "relative",
+    padding: "10px 0 20px 1px",
+    borderBottom: "2px solid var(--mdc-theme-on-background)",
+    display: "flex",
+    alignItems: "center",
+    "& > *": {
+        display: "inline-block"
+    },
+    "& > * + *": {
+        marginLeft: 10
+    },
+    span: {
+        display: "flex",
+        alignContent: "center",
+        ">svg": {
+            height: 18
+        }
+    }
 });
 
 const MenuButton = ({ onClick, active, children, onMouseDown = e => e.preventDefault() }) => {
@@ -29,7 +46,15 @@ class Menu extends React.Component {
     menu = React.createRef();
 
     render() {
-        const { value, onChange, editor, exclude, activePlugin, activatePlugin, deactivatePlugin } = this.props;
+        const {
+            value,
+            onChange,
+            editor,
+            exclude,
+            activePlugin,
+            activatePlugin,
+            deactivatePlugin
+        } = this.props;
 
         if (!editor) {
             return null;

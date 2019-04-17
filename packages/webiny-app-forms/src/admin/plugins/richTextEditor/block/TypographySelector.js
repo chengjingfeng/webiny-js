@@ -44,17 +44,20 @@ const List = styled("div")({
 const dropDownDialog = css({
     position: "absolute",
     zIndex: "2",
-    top: 27,
-    left: -5,
+    top: 35,
+    left: 2,
     width: 200
 });
 
 const Button = styled("div")({
-    padding: "1px 3px 3px 3px",
+    padding: "0px 5px 2px 5px",
     backgroundColor: "var(--mdc-theme-on-background)",
     fontSize: "0.8em",
     whiteSpace: "nowrap",
-    lineHeight: "110%"
+    height: 24,
+    display: "flex",
+    alignItems: "center",
+    lineHeight: "100%"
 });
 
 class TypographySelector extends React.Component<*, { showMenu: boolean }> {

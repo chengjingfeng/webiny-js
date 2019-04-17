@@ -1,6 +1,11 @@
 import React, {useContext} from "react";
 import styled from "react-emotion";
-import { Accordion, AccordionItem } from "webiny-ui/Accordion";
+import { Switch } from "webiny-ui/Switch";
+import {
+    SimpleForm,
+    SimpleFormContent,
+    SimpleFormHeader
+} from "webiny-admin/components/SimpleForm";
 import { Typography } from "webiny-ui/Typography";
 import { RichTextEditor } from "webiny-app-forms/admin/components/RichTextEditor";
 import { FormEditorContext } from "webiny-app-forms/admin/components/FormEditor";
@@ -13,36 +18,37 @@ const Container = styled("div")({
 });
 
 export const TriggersTab = () => {
-    const { formState } = useContext(FormEditorContext);
+    const { validators, createBind, createToggle, createSetValue } = useValidatorsTab(props);
 
     return (
         <Container>
-            <Typography use={"overline"}>
-                Which action should be taken after form submission
-            </Typography>
-            <Accordion>
-                <AccordionItem
-                    description="Show a success message once a user submits the form"
-                    icon={<TextIcon />}
-                    title="Display a message"
-                >
-                    <RichTextEditor value={formState.triggers.message}/>
-                </AccordionItem>
-                <AccordionItem
-                    description="Send a user to a specific URL"
-                    icon={<LinkIcon />}
-                    title="Redirect"
-                >
-                    <div>Inner child 2</div>
-                </AccordionItem>
-                <AccordionItem
-                    description="Send a POST request to a specific URL"
-                    icon={<CodeIcon />}
-                    title="Webhook"
-                >
-                    <div>Inner child 3</div>
-                </AccordionItem>
-            </Accordion>
+            {validators.map(({ optional, validator: v }) => {
+                const vIndex = props.value.findIndex(x => x.id === v.id);
+                const enabled = vIndex > -1;
+                const hasSettings = typeof v.renderSettings === "function";
+                const Bind = createBind(v.id, vIndex);
+                const setValue = createSetValue(v.id, vIndex);
+                const data = props.value[vIndex];
+
+                return (
+                    <SimpleForm key={v.id}>
+                        <SimpleFormHeader title={v.label} description={v.description}>
+                            {optional && (
+                                <Switch
+                                    label="Enabled"
+                                    value={enabled}
+                                    onChange={createToggle(v.id, enabled)}
+                                />
+                            )}
+                        </SimpleFormHeader>
+                        {enabled && hasSettings && (
+                            <SimpleFormContent>
+                                {v.renderSettings({ data, setValue, Bind })}
+                            </SimpleFormContent>
+                        )}
+                    </SimpleForm>
+                );
+            })}
         </Container>
     );
 };
